@@ -18,7 +18,7 @@ real projects, live demos, source links, and a clear shortlist recommendation.
 
 ## Tech Stack
 
-- Next/Vinext application
+- Next.js application
 - React 19
 - Three.js for the live 3D backend architecture hero
 - Lucide React icons
