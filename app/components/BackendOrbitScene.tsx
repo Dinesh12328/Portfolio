@@ -3,22 +3,35 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const serviceNodes = [
-  new THREE.Vector3(-3.25, 0.44, 0.22),
-  new THREE.Vector3(-1.46, 1.3, -0.7),
-  new THREE.Vector3(1.42, 1.22, -0.74),
-  new THREE.Vector3(3.18, 0.42, 0.16),
+const panelPositions = [
+  { position: new THREE.Vector3(-2.85, 0.35, -0.45), rotation: 0.42 },
+  { position: new THREE.Vector3(-1.15, 1.35, -1.0), rotation: 0.18 },
+  { position: new THREE.Vector3(1.24, 1.18, -0.96), rotation: -0.18 },
+  { position: new THREE.Vector3(2.9, 0.38, -0.4), rotation: -0.42 },
 ];
 
-const packetPoints = Array.from({ length: 92 }, (_, index) => {
-  const angle = index * 1.79;
-  const radius = 2.1 + (index % 9) * 0.2;
+const particlePoints = Array.from({ length: 150 }, (_, index) => {
+  const layer = index % 6;
+  const angle = index * 2.34;
+  const radius = 1.2 + layer * 0.48;
   return new THREE.Vector3(
     Math.cos(angle) * radius,
-    -0.18 + (index % 13) * 0.15,
-    Math.sin(angle * 0.82) * 1.7 - 1.1,
+    -0.7 + (index % 18) * 0.12,
+    Math.sin(angle * 0.7) * 2.8 - 1.1,
   );
 });
+
+function makeRibbon(offset: number) {
+  const points = Array.from({ length: 7 }, (_, index) => {
+    const step = index / 6;
+    return new THREE.Vector3(
+      -3.4 + step * 6.8,
+      0.12 + Math.sin(step * Math.PI * 2 + offset) * 0.52,
+      -1.25 + Math.cos(step * Math.PI * 2 + offset) * 0.58,
+    );
+  });
+  return new THREE.CatmullRomCurve3(points);
+}
 
 export function BackendOrbitScene() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -38,211 +51,164 @@ export function BackendOrbitScene() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.02;
+    renderer.toneMappingExposure = 1.08;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-    camera.position.set(0.28, 2.45, 8.15);
-    camera.lookAt(0, 0.42, 0);
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+    camera.position.set(0.25, 1.85, 7.6);
+    camera.lookAt(0, 0.42, -0.8);
 
     const rig = new THREE.Group();
-    rig.position.set(2.05, -0.12, 0);
-    rig.rotation.x = -0.16;
+    rig.position.set(2.25, -0.04, 0);
+    rig.rotation.x = -0.08;
     scene.add(rig);
 
-    const floorGrid = new THREE.GridHelper(9.2, 18, "#86aaa5", "#263a38");
-    floorGrid.position.y = -0.56;
-    const floorMaterial = floorGrid.material as THREE.Material;
-    floorMaterial.transparent = true;
-    floorMaterial.opacity = 0.13;
-    rig.add(floorGrid);
-
-    const platformMaterial = new THREE.MeshBasicMaterial({
-      color: "#77d4c7",
+    const deckMaterial = new THREE.MeshBasicMaterial({
+      color: "#9be8dc",
       transparent: true,
-      opacity: 0.12,
+      opacity: 0.08,
+      side: THREE.DoubleSide,
     });
-    [1.65, 2.35, 3.1].forEach((radius, index) => {
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(radius, 0.009, 10, 160),
-        platformMaterial.clone(),
-      );
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = -0.37 + index * 0.03;
-      rig.add(ring);
-    });
+    const deck = new THREE.Mesh(new THREE.PlaneGeometry(7.6, 4.8, 1, 1), deckMaterial);
+    deck.position.set(0, -0.8, -1.05);
+    deck.rotation.x = -Math.PI / 2;
+    rig.add(deck);
 
-    const particleGeometry = new THREE.BufferGeometry().setFromPoints(packetPoints);
-    const particleMaterial = new THREE.PointsMaterial({
-      color: "#9be7dc",
-      size: 0.027,
+    const grid = new THREE.GridHelper(8.8, 18, "#92bcb6", "#263b39");
+    grid.position.set(0, -0.78, -1.05);
+    const gridMaterial = grid.material as THREE.Material;
+    gridMaterial.transparent = true;
+    gridMaterial.opacity = 0.16;
+    rig.add(grid);
+
+    const coreMaterial = new THREE.MeshPhysicalMaterial({
+      color: "#dcebe7",
+      emissive: "#133a37",
+      emissiveIntensity: 0.12,
+      metalness: 0.46,
+      roughness: 0.34,
+      clearcoat: 0.34,
+      clearcoatRoughness: 0.3,
+    });
+    const coreGlassMaterial = new THREE.MeshBasicMaterial({
+      color: "#8de5d8",
       transparent: true,
-      opacity: 0.38,
-      depthWrite: false,
+      opacity: 0.24,
+      side: THREE.DoubleSide,
     });
-    const packets = new THREE.Points(particleGeometry, particleMaterial);
-    rig.add(packets);
-
-    const serverMaterial = new THREE.MeshPhysicalMaterial({
-      color: "#dbe9e5",
-      emissive: "#0c2f2d",
-      emissiveIntensity: 0.07,
-      metalness: 0.32,
-      roughness: 0.42,
-      clearcoat: 0.2,
-      clearcoatRoughness: 0.44,
-    });
-    const darkMaterial = new THREE.MeshStandardMaterial({
-      color: "#111d1d",
-      metalness: 0.28,
-      roughness: 0.72,
-    });
-    const accentMaterial = new THREE.MeshBasicMaterial({
-      color: "#7ed9cd",
-      transparent: true,
-      opacity: 0.82,
-    });
-
     const core = new THREE.Group();
-    const coreBase = new THREE.Mesh(
-      new THREE.BoxGeometry(1.82, 0.08, 1.12),
-      darkMaterial,
+    const monolith = new THREE.Mesh(new THREE.BoxGeometry(0.86, 1.72, 0.48), coreMaterial);
+    const innerGlow = new THREE.Mesh(new THREE.PlaneGeometry(0.52, 1.18), coreGlassMaterial);
+    innerGlow.position.set(0, 0.04, -0.252);
+    const base = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.82, 0.94, 0.12, 64),
+      new THREE.MeshStandardMaterial({
+        color: "#101d1d",
+        metalness: 0.35,
+        roughness: 0.66,
+      }),
     );
-    coreBase.position.y = -0.16;
-    core.add(coreBase);
-
-    [-0.04, 0.17, 0.38, 0.59, 0.8].forEach((y, index) => {
-      const slab = new THREE.Mesh(
-        new THREE.BoxGeometry(1.44 - index * 0.035, 0.13, 0.9),
-        serverMaterial.clone(),
-      );
-      slab.position.y = y;
-      core.add(slab);
-
-      const status = new THREE.Mesh(
-        new THREE.BoxGeometry(0.82, 0.014, 0.025),
-        accentMaterial.clone(),
-      );
-      status.position.set(0, y + 0.074, -0.465);
-      core.add(status);
-    });
-
-    const crown = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.5, 0.5, 0.1, 52),
-      serverMaterial.clone(),
-    );
-    crown.position.y = 1.0;
-    core.add(crown);
-    core.position.set(0, 0.02, 0);
+    base.position.y = -0.93;
+    core.add(base, monolith, innerGlow);
+    core.position.set(0, 0.36, -0.88);
     rig.add(core);
 
     const panelMaterial = new THREE.MeshPhysicalMaterial({
-      color: "#c9d8d3",
-      emissive: "#173b38",
+      color: "#d2dfdb",
+      emissive: "#153936",
       emissiveIntensity: 0.1,
-      metalness: 0.18,
-      roughness: 0.5,
       transparent: true,
-      opacity: 0.9,
-      clearcoat: 0.28,
+      opacity: 0.78,
+      metalness: 0.22,
+      roughness: 0.36,
+      clearcoat: 0.4,
     });
-    const panelAccentMaterial = new THREE.MeshBasicMaterial({
-      color: "#c8b177",
+    const panelLineMaterial = new THREE.MeshBasicMaterial({
+      color: "#80dfd2",
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.78,
     });
-    const nodeMeshes = serviceNodes.map((node, index) => {
-      const service = new THREE.Group();
-      const body = new THREE.Mesh(
-        new THREE.BoxGeometry(0.78, 0.46, 0.5),
-        panelMaterial.clone(),
+    const panels = panelPositions.map(({ position, rotation }, index) => {
+      const panel = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.58, 0.038), panelMaterial.clone());
+      const topLine = new THREE.Mesh(
+        new THREE.BoxGeometry(0.64, 0.026, 0.018),
+        index % 2 === 0
+          ? panelLineMaterial.clone()
+          : new THREE.MeshBasicMaterial({
+              color: "#c9ad70",
+              transparent: true,
+              opacity: 0.78,
+            }),
       );
-      const header = new THREE.Mesh(
-        new THREE.BoxGeometry(0.56, 0.03, 0.035),
-        index % 2 === 0 ? accentMaterial.clone() : panelAccentMaterial.clone(),
-      );
-      const base = new THREE.Mesh(
-        new THREE.BoxGeometry(0.94, 0.055, 0.58),
-        darkMaterial.clone(),
-      );
-      const halo = new THREE.Mesh(
-        new THREE.TorusGeometry(0.46, 0.006, 8, 96),
-        platformMaterial.clone(),
-      );
-      halo.rotation.x = Math.PI / 2;
-      halo.position.y = -0.29;
-      header.position.set(0, 0.25, -0.27);
-      base.position.set(0, -0.28, 0);
-      service.add(halo, base, body, header);
-      service.position.copy(node);
-      service.rotation.y = index < 2 ? 0.28 : -0.28;
-      rig.add(service);
-      return service;
+      const rowOne = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.018, 0.018), panelLineMaterial.clone());
+      const rowTwo = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.018, 0.018), panelLineMaterial.clone());
+      topLine.position.set(-0.05, 0.2, -0.034);
+      rowOne.position.set(0.02, 0.02, -0.034);
+      rowTwo.position.set(-0.1, -0.13, -0.034);
+      panel.add(body, topLine, rowOne, rowTwo);
+      panel.position.copy(position);
+      panel.rotation.y = rotation;
+      rig.add(panel);
+      return panel;
     });
 
-    const arcMaterial = new THREE.MeshBasicMaterial({
-      color: "#d7fff6",
-      transparent: true,
-      opacity: 0.18,
-    });
-    const pulseMaterial = new THREE.MeshBasicMaterial({
+    const ribbonMaterial = new THREE.MeshBasicMaterial({
       color: "#8de5d8",
       transparent: true,
-      opacity: 0.86,
+      opacity: 0.34,
     });
-    const arcs = serviceNodes.map((node) => {
-      const start = new THREE.Vector3(0, 0.42, 0);
-      const middle = new THREE.Vector3(
-        node.x * 0.5,
-        node.y + 0.62,
-        node.z - 0.34,
-      );
-      const curve = new THREE.CatmullRomCurve3([start, middle, node]);
-      const line = new THREE.Mesh(
-        new THREE.TubeGeometry(curve, 76, 0.012, 8, false),
-        arcMaterial.clone(),
+    const goldRibbonMaterial = new THREE.MeshBasicMaterial({
+      color: "#c8ad72",
+      transparent: true,
+      opacity: 0.28,
+    });
+    const pulseMaterial = new THREE.MeshBasicMaterial({
+      color: "#d9fff7",
+      transparent: true,
+      opacity: 0.95,
+    });
+    const ribbons = [0, 1.7, 3.25].map((offset, index) => {
+      const curve = makeRibbon(offset);
+      const mesh = new THREE.Mesh(
+        new THREE.TubeGeometry(curve, 120, index === 1 ? 0.017 : 0.012, 8, false),
+        index === 1 ? goldRibbonMaterial.clone() : ribbonMaterial.clone(),
       );
       const pulse = new THREE.Mesh(
-        new THREE.SphereGeometry(0.055, 18, 18),
+        new THREE.SphereGeometry(index === 1 ? 0.052 : 0.042, 16, 16),
         pulseMaterial.clone(),
       );
-      const secondaryPulse = new THREE.Mesh(
-        new THREE.SphereGeometry(0.034, 14, 14),
-        panelAccentMaterial.clone(),
-      );
-      rig.add(line, pulse, secondaryPulse);
-      return { curve, pulse, secondaryPulse };
+      mesh.position.y = index * 0.18;
+      pulse.position.y = index * 0.18;
+      rig.add(mesh, pulse);
+      return { curve, mesh, pulse, offset: index * 0.23 };
     });
 
-    const backdropMaterial = new THREE.MeshBasicMaterial({
-      color: "#f3fffb",
-      transparent: true,
-      opacity: 0.055,
-      side: THREE.DoubleSide,
-    });
-    [-2.25, -0.75, 0.75, 2.25].forEach((x, index) => {
-      const pane = new THREE.Mesh(
-        new THREE.PlaneGeometry(0.76, 1.72),
-        backdropMaterial.clone(),
-      );
-      pane.position.set(x, 1.18 + index * 0.04, -1.12);
-      pane.rotation.y = 0.08 - index * 0.08;
-      rig.add(pane);
-    });
+    const particles = new THREE.Points(
+      new THREE.BufferGeometry().setFromPoints(particlePoints),
+      new THREE.PointsMaterial({
+        color: "#a7eee4",
+        size: 0.024,
+        transparent: true,
+        opacity: 0.42,
+        depthWrite: false,
+      }),
+    );
+    rig.add(particles);
 
-    const ambientLight = new THREE.AmbientLight("#ffffff", 0.78);
+    const ambientLight = new THREE.AmbientLight("#ffffff", 0.76);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight("#ecfffb", 2.75);
-    keyLight.position.set(3.5, 4.3, 5.4);
+    const keyLight = new THREE.DirectionalLight("#f0fffb", 2.9);
+    keyLight.position.set(3.8, 4.8, 4.8);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight("#71d6ca", 1.05);
-    rimLight.position.set(-3.8, 1.8, 2.2);
+    const rimLight = new THREE.PointLight("#77dace", 5.2, 14);
+    rimLight.position.set(-1.6, 1.35, 1.2);
     scene.add(rimLight);
 
-    const warmLight = new THREE.PointLight("#c9aa70", 2.1, 12);
-    warmLight.position.set(0.4, 1.1, 2.8);
+    const warmLight = new THREE.PointLight("#c7a86e", 2.4, 12);
+    warmLight.position.set(2.4, 0.85, 1.5);
     scene.add(warmLight);
 
     const mouse = { x: 0, y: 0 };
@@ -270,22 +236,23 @@ export function BackendOrbitScene() {
       const elapsed = clock.getElapsedTime();
       const motion = prefersReducedMotion ? 0 : elapsed;
 
-      rig.rotation.y = -0.08 + mouse.x * 0.065 + Math.sin(motion * 0.18) * 0.048;
-      rig.rotation.x = -0.16 + mouse.y * 0.035;
-      core.position.y = 0.02 + Math.sin(motion * 0.52) * 0.018;
-      packets.rotation.y = motion * 0.045;
-      packets.rotation.x = Math.sin(motion * 0.16) * 0.018;
+      rig.rotation.y = -0.08 + mouse.x * 0.075 + Math.sin(motion * 0.18) * 0.05;
+      rig.rotation.x = -0.08 + mouse.y * 0.035;
+      core.rotation.y = Math.sin(motion * 0.38) * 0.08;
+      core.position.y = 0.36 + Math.sin(motion * 0.62) * 0.035;
+      particles.rotation.y = motion * 0.048;
+      particles.rotation.x = Math.sin(motion * 0.22) * 0.02;
 
-      nodeMeshes.forEach((mesh, index) => {
-        mesh.position.y =
-          serviceNodes[index].y + Math.sin(motion * 0.58 + index) * 0.04;
+      panels.forEach((panel, index) => {
+        panel.position.y =
+          panelPositions[index].position.y + Math.sin(motion * 0.55 + index) * 0.06;
       });
 
-      arcs.forEach(({ curve, pulse, secondaryPulse }, index) => {
-        const progress = ((motion * 0.16 + index * 0.19) % 1 + 1) % 1;
-        const secondProgress = ((motion * 0.12 + index * 0.24 + 0.5) % 1 + 1) % 1;
+      ribbons.forEach(({ curve, mesh, pulse, offset }, index) => {
+        mesh.rotation.z = Math.sin(motion * 0.2 + index) * 0.025;
+        const progress = ((motion * (0.12 + index * 0.025) + offset) % 1 + 1) % 1;
         pulse.position.copy(curve.getPoint(progress));
-        secondaryPulse.position.copy(curve.getPoint(secondProgress));
+        pulse.position.y += index * 0.18;
       });
 
       renderer.render(scene, camera);
@@ -300,14 +267,7 @@ export function BackendOrbitScene() {
       canvas.removeEventListener("pointermove", handlePointerMove);
       renderer.dispose();
       scene.traverse((object) => {
-        if (object instanceof THREE.Mesh) {
-          object.geometry.dispose();
-          const materials = Array.isArray(object.material)
-            ? object.material
-            : [object.material];
-          materials.forEach((material) => material.dispose());
-        }
-        if (object instanceof THREE.Points) {
+        if (object instanceof THREE.Mesh || object instanceof THREE.Points) {
           object.geometry.dispose();
           const materials = Array.isArray(object.material)
             ? object.material
@@ -322,7 +282,7 @@ export function BackendOrbitScene() {
     <canvas
       ref={canvasRef}
       className="backend-orbit"
-      aria-label="Professional 3D backend architecture scene with server, service, and data flow elements"
+      aria-label="Immersive 3D backend command center with data ribbons and floating panels"
     />
   );
 }
