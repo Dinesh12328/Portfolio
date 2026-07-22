@@ -295,7 +295,7 @@ main {
 .intro-band,
 .systems-band,
 .education-band,
-.verdict-band {
+.highlight-band {
   max-width: none;
 }
 
@@ -319,7 +319,7 @@ main {
 .projects-grid,
 .skills-grid,
 .signal-grid,
-.verdict-grid,
+.highlight-grid,
 .contact-panel {
   margin-left: auto;
   margin-right: auto;
@@ -339,7 +339,7 @@ main {
 }
 
 .systems-band h2,
-.verdict-band h2 {
+.highlight-band h2 {
   color: inherit;
 }
 
@@ -363,7 +363,7 @@ main {
 
 .systems-band .section-heading p,
 .systems-band .signal-item p,
-.verdict-band .section-heading p {
+.highlight-band .section-heading p {
   color: rgba(247, 251, 248, 0.72);
 }
 
@@ -376,7 +376,7 @@ main {
 .project-card,
 .skill-card,
 .signal-item,
-.verdict-card {
+.highlight-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -403,7 +403,7 @@ main {
 .project-icon,
 .skill-title svg,
 .signal-item svg,
-.verdict-card svg,
+.highlight-card svg,
 .education-list svg {
   color: var(--accent-strong);
   flex: 0 0 auto;
@@ -423,7 +423,7 @@ main {
 .project-card h3,
 .skill-card h3,
 .signal-item h3,
-.verdict-card h3 {
+.highlight-card h3 {
   color: var(--ink);
   font-size: 1.16rem;
   margin: 0;
@@ -432,7 +432,7 @@ main {
 .project-card p,
 .skill-card p,
 .signal-item p,
-.verdict-card p {
+.highlight-card p {
   color: var(--muted);
   line-height: 1.66;
   margin: 0;
@@ -548,7 +548,7 @@ main {
 }
 
 .signal-item h3,
-.verdict-card h3 {
+.highlight-card h3 {
   margin-top: 18px;
 }
 
@@ -560,22 +560,22 @@ main {
   margin-top: 12px;
 }
 
-.verdict-band {
+.highlight-band {
   background: #111717;
   color: #f7fbf8;
 }
 
-.verdict-grid {
+.highlight-grid {
   display: grid;
   gap: 18px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.verdict-card {
+.highlight-card {
   background: #f8faf6;
 }
 
-.verdict-card h3 {
+.highlight-card h3 {
   color: #111717;
 }
 
@@ -632,7 +632,7 @@ main {
   .projects-grid,
   .skills-grid,
   .signal-grid,
-  .verdict-grid,
+  .highlight-grid,
   .two-column,
   .contact-panel {
     grid-template-columns: 1fr 1fr;
@@ -714,7 +714,7 @@ main {
   .projects-grid,
   .skills-grid,
   .signal-grid,
-  .verdict-grid,
+  .highlight-grid,
   .two-column,
   .contact-panel {
     grid-template-columns: 1fr;
@@ -723,7 +723,7 @@ main {
   .project-card,
   .skill-card,
   .signal-item,
-  .verdict-card,
+  .highlight-card,
   .contact-panel {
     padding: 20px;
   }

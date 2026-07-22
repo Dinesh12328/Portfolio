@@ -156,20 +156,20 @@ const skillGroups = [
   },
 ];
 
-const verdictItems = [
+const highlightItems = [
   {
-    title: "Move Forward",
-    text: "For a Java Backend Developer internship, I would move Dinesh into the technical round. The projects show real API ownership, not just tutorial endpoints.",
+    title: "API Ownership",
+    text: "Built multiple Spring Boot applications with authentication, role-based flows, layered services, persistence, documentation, and deployable project structure.",
     icon: BadgeCheck,
   },
   {
-    title: "Backend Fit",
-    text: "The strongest evidence is Spring Boot with JWT, layered services, JPA persistence, Docker, Swagger, and deployment notes across several projects.",
+    title: "System Design Practice",
+    text: "Applied microservices, gateway routing, service discovery, event-driven order flows, Redis caching, and clean lifecycle rules in project work.",
     icon: ShieldCheck,
   },
   {
-    title: "Growth Signal",
-    text: "He is already practicing microservices, Kafka-ready events, Redis caching, dashboard APIs, and testable flows. That is a useful intern foundation.",
+    title: "Engineering Discipline",
+    text: "Project repositories include real setup paths, API documentation, security decisions, Docker support, and focused testing practices.",
     icon: Sparkles,
   },
 ];
@@ -188,7 +188,7 @@ export default function Home() {
             <div className="nav-links">
               <a href="#projects">Projects</a>
               <a href="#skills">Skills</a>
-              <a href="#verdict">Verdict</a>
+              <a href="#highlights">Highlights</a>
               <a href="#contact">Contact</a>
             </div>
           </nav>
@@ -196,15 +196,16 @@ export default function Home() {
           <div className="hero-content">
             <div className="eyebrow">
               <TerminalSquare aria-hidden="true" size={18} />
-              Java Backend Developer Intern
+              Java Backend Developer
             </div>
             <h1 id="hero-title">
-              Java backend portfolio for production-style API systems.
+              Backend portfolio built around real Spring Boot systems.
             </h1>
             <p className="hero-copy">
               Dinesh Pyla builds Spring Boot applications with secure REST APIs,
               persistence, microservices, event-driven workflows, Dockerized
-              delivery, and browser-ready demos that an interviewer can inspect.
+              delivery, and browser-ready demos with source code available for
+              review.
             </p>
 
             <div className="hero-actions" aria-label="Primary links">
@@ -254,17 +255,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section intro-band" aria-label="Candidate summary">
+      <section className="section intro-band" aria-label="Professional summary">
         <div className="section-grid two-column">
           <div>
-            <p className="section-kicker">Candidate Snapshot</p>
-            <h2>Backend intern profile with evidence you can inspect.</h2>
+            <p className="section-kicker">Profile</p>
+            <h2>Java backend developer focused on practical systems.</h2>
           </div>
           <p className="lead">
             Dinesh Pyla is focused on Java backend engineering: Spring Boot
             applications, REST API design, authentication, persistence,
             microservices, and deployment. The work shown here highlights the
-            projects most relevant to backend internship interviews.
+            projects most relevant to backend engineering roles.
           </p>
         </div>
       </section>
@@ -277,7 +278,7 @@ export default function Home() {
           </h2>
           <p>
             Render demos can take a cold-start moment, but each card includes
-            both the live project and source repository for technical review.
+            both the live project and source repository for direct review.
           </p>
         </div>
 
@@ -339,7 +340,7 @@ export default function Home() {
       <section className="section systems-band" aria-labelledby="systems-title">
         <div className="section-heading compact">
           <p className="section-kicker">Architecture Signal</p>
-          <h2 id="systems-title">Backend depth an interviewer can verify.</h2>
+          <h2 id="systems-title">Backend depth shown through implementation.</h2>
         </div>
         <div className="signal-grid">
           <div className="signal-item">
@@ -382,8 +383,8 @@ export default function Home() {
           <p className="section-kicker">Technical Stack</p>
           <h2 id="skills-title">Focused Java backend stack.</h2>
           <p>
-            Focused on the technologies that match Java Backend Developer and
-            Spring Boot internship interviews.
+            Focused on technologies used across Java backend, API, and
+            Spring Boot development work.
           </p>
         </div>
 
@@ -408,24 +409,24 @@ export default function Home() {
       </section>
 
       <section
-        className="section verdict-band"
-        id="verdict"
-        aria-labelledby="verdict-title"
+        className="section highlight-band"
+        id="highlights"
+        aria-labelledby="highlights-title"
       >
         <div className="section-heading">
-          <p className="section-kicker">Interviewer Verdict</p>
-          <h2 id="verdict-title">Shortlist recommendation.</h2>
+          <p className="section-kicker">Engineering Highlights</p>
+          <h2 id="highlights-title">What the project work demonstrates.</h2>
           <p>
-            The portfolio is positioned as evidence for a backend internship
-            screen: project depth, API correctness, security awareness,
-            persistence, testing, and deployability.
+            A quick view of the engineering strengths visible across the
+            repositories: API design, security, persistence, service boundaries,
+            deployment readiness, and maintainable project structure.
           </p>
         </div>
-        <div className="verdict-grid">
-          {verdictItems.map((item) => {
+        <div className="highlight-grid">
+          {highlightItems.map((item) => {
             const Icon = item.icon;
             return (
-              <article className="verdict-card" key={item.title}>
+              <article className="highlight-card" key={item.title}>
                 <Icon aria-hidden="true" size={24} />
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
@@ -471,10 +472,10 @@ export default function Home() {
         <div className="contact-panel">
           <div>
             <p className="section-kicker">Contact</p>
-            <h2 id="contact-title">Ready for backend internship interviews.</h2>
+            <h2 id="contact-title">Available for Java backend opportunities.</h2>
             <p>
-              For Java, Spring Boot, REST API, and backend internship roles,
-              start with the project demos and source links above.
+              For Java, Spring Boot, REST API, and backend development roles,
+              start with the project demos, source links, GitHub, and LinkedIn.
             </p>
           </div>
           <div className="contact-actions">

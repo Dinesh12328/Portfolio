@@ -1,11 +1,11 @@
 # Dinesh Pyla Portfolio
 
-Immersive portfolio for Dinesh Pyla, a Java Backend Developer Intern candidate
+Immersive portfolio for Dinesh Pyla, a Java Backend Developer
 focused on Spring Boot, REST APIs, JWT security, persistence, microservices,
 Kafka-ready event flows, Docker, and deployable backend projects.
 
-The site presents Dinesh as a backend candidate for internship interviews with
-real projects, live demos, source links, and a clear shortlist recommendation.
+The site presents real projects, live demos, source links, technical strengths,
+education, and contact information in a professional portfolio format.
 
 ## Featured Projects
 
@@ -39,10 +39,11 @@ npm run build
 npm test
 ```
 
-The test suite checks that the portfolio renders the correct candidate content,
-project links, interviewer verdict, and no unrelated starter preview material.
+The test suite checks that the portfolio renders the correct professional
+content, project links, engineering highlights, and no unrelated starter
+preview material.
 
-## Candidate Links
+## Profile Links
 
 - Email: pd1929350@gmail.com
 - GitHub: https://github.com/Dinesh12328
