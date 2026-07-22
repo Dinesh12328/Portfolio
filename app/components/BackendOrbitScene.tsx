@@ -3,7 +3,12 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const nodeColors = ["#7fd8cd", "#c5a36a", "#8db7c7", "#d18a72"];
+const serviceNodes = [
+  new THREE.Vector3(-2.7, 0.54, 0.2),
+  new THREE.Vector3(-0.96, 1.05, -0.28),
+  new THREE.Vector3(1.08, 0.9, -0.36),
+  new THREE.Vector3(2.7, 0.42, 0.12),
+];
 
 export function BackendOrbitScene() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -23,110 +28,109 @@ export function BackendOrbitScene() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-    camera.position.set(0, 0.62, 8.4);
+    const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+    camera.position.set(0.5, 2.1, 7.2);
+    camera.lookAt(0, 0.35, 0);
 
     const rig = new THREE.Group();
-    rig.position.set(2.45, 0.05, 0);
+    rig.position.set(2.15, -0.08, 0);
+    rig.rotation.x = -0.12;
     scene.add(rig);
 
-    const coreMaterial = new THREE.MeshStandardMaterial({
-      color: "#d9ebe5",
-      emissive: "#245e57",
-      emissiveIntensity: 0.2,
-      metalness: 0.62,
-      roughness: 0.3,
+    const floorGrid = new THREE.GridHelper(7.2, 12, "#6c8f8a", "#253635");
+    floorGrid.position.y = -0.42;
+    const gridMaterial = floorGrid.material as THREE.Material;
+    gridMaterial.transparent = true;
+    gridMaterial.opacity = 0.12;
+    rig.add(floorGrid);
+
+    const coreMaterial = new THREE.MeshPhysicalMaterial({
+      color: "#d8e6e1",
+      emissive: "#0d2c2b",
+      emissiveIntensity: 0.08,
+      metalness: 0.24,
+      roughness: 0.62,
+      clearcoat: 0.16,
     });
     const core = new THREE.Group();
-    [-0.28, 0, 0.28].forEach((y, index) => {
+    [-0.18, 0.05, 0.28].forEach((y, index) => {
       const layer = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.86 - index * 0.03, 0.86, 0.16, 56),
-        coreMaterial.clone(),
+        new THREE.BoxGeometry(1.08 - index * 0.05, 0.16, 0.72),
+        coreMaterial,
       );
       layer.position.y = y;
       core.add(layer);
     });
-    const coreBase = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.02, 1.02, 0.06, 64),
-      new THREE.MeshStandardMaterial({
-        color: "#1e2a2a",
-        emissive: "#153633",
-        emissiveIntensity: 0.22,
-        metalness: 0.5,
-        roughness: 0.38,
-      }),
-    );
-    coreBase.position.y = -0.48;
-    core.add(coreBase);
+    core.position.set(0, 0.14, 0);
     rig.add(core);
 
-    const ringMaterial = new THREE.MeshBasicMaterial({
-      color: "#86d9ce",
-      transparent: true,
-      opacity: 0.36,
+    const baseMaterial = new THREE.MeshStandardMaterial({
+      color: "#172322",
+      roughness: 0.78,
+      metalness: 0.18,
     });
-    const ringAngles = [0.14, 1.06, -0.86];
-    ringAngles.forEach((angle, index) => {
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(2.0 + index * 0.64, 0.007, 12, 160),
-        ringMaterial.clone(),
+    const coreBase = new THREE.Mesh(
+      new THREE.BoxGeometry(1.42, 0.08, 0.95),
+      baseMaterial,
+    );
+    coreBase.position.set(0, -0.04, 0);
+    rig.add(coreBase);
+
+    const serviceMaterial = new THREE.MeshStandardMaterial({
+      color: "#b8cbc6",
+      emissive: "#183a38",
+      emissiveIntensity: 0.1,
+      metalness: 0.18,
+      roughness: 0.64,
+    });
+    const accentMaterial = new THREE.MeshBasicMaterial({
+      color: "#6fc9bd",
+      transparent: true,
+      opacity: 0.72,
+    });
+
+    const nodeMeshes = serviceNodes.map((node, index) => {
+      const service = new THREE.Group();
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(0.58, 0.34, 0.44),
+        serviceMaterial.clone(),
       );
-      ring.rotation.x = angle;
-      ring.rotation.y = index * 0.7;
-      rig.add(ring);
+      const status = new THREE.Mesh(
+        new THREE.BoxGeometry(0.34, 0.018, 0.03),
+        accentMaterial.clone(),
+      );
+      status.position.set(0, 0.18, -0.23);
+      service.add(body, status);
+      service.position.copy(node);
+      service.rotation.y = index % 2 === 0 ? 0.18 : -0.18;
+      rig.add(service);
+      return service;
     });
 
     const lineMaterial = new THREE.LineBasicMaterial({
-      color: "#d7fff4",
+      color: "#c9f4ec",
       transparent: true,
-      opacity: 0.31,
+      opacity: 0.22,
     });
-    const connectionGeometry = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 0, 0),
-    ]);
-
-    const nodes = Array.from({ length: 9 }, (_, index) => {
-      const angle = (index / 9) * Math.PI * 2;
-      const radius = 2.45 + (index % 3) * 0.48;
-      const height = index % 2 === 0 ? 0.58 : -0.58;
-      const geometry =
-        index % 3 === 0
-          ? new THREE.BoxGeometry(0.48, 0.26, 0.34)
-          : new THREE.BoxGeometry(0.34, 0.34, 0.34);
-      const material = new THREE.MeshStandardMaterial({
-        color: nodeColors[index % nodeColors.length],
-        emissive: nodeColors[index % nodeColors.length],
-        emissiveIntensity: 0.22,
-        metalness: 0.42,
-        roughness: 0.34,
-      });
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(
-        Math.cos(angle) * radius,
-        height,
-        Math.sin(angle) * radius,
-      );
-      rig.add(mesh);
-
-      const line = new THREE.Line(
-        connectionGeometry.clone(),
-        lineMaterial.clone(),
-      );
-      rig.add(line);
-
-      return { angle, radius, height, mesh, line };
+    const linePoints: THREE.Vector3[] = [];
+    serviceNodes.forEach((node) => {
+      linePoints.push(new THREE.Vector3(0, 0.22, 0), node);
     });
+    const serviceLines = new THREE.LineSegments(
+      new THREE.BufferGeometry().setFromPoints(linePoints),
+      lineMaterial,
+    );
+    rig.add(serviceLines);
 
-    const ambientLight = new THREE.AmbientLight("#ffffff", 0.68);
+    const ambientLight = new THREE.AmbientLight("#ffffff", 0.82);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.PointLight("#7fd8cd", 6, 20);
-    keyLight.position.set(3.2, 3.4, 5);
+    const keyLight = new THREE.DirectionalLight("#dff8f2", 2.4);
+    keyLight.position.set(3.4, 4, 5);
     scene.add(keyLight);
 
-    const warmLight = new THREE.PointLight("#c5a36a", 3.2, 18);
-    warmLight.position.set(-4, -1, 3);
+    const warmLight = new THREE.DirectionalLight("#c5a36a", 0.72);
+    warmLight.position.set(-3.4, 1.2, 3);
     scene.add(warmLight);
 
     const mouse = { x: 0, y: 0 };
@@ -154,30 +158,13 @@ export function BackendOrbitScene() {
       const elapsed = clock.getElapsedTime();
       const motion = prefersReducedMotion ? 0 : elapsed;
 
-      rig.rotation.y = motion * 0.12 + mouse.x * 0.1;
-      rig.rotation.x = -0.1 + mouse.y * 0.06;
-      core.rotation.y = motion * 0.18;
+      rig.rotation.y = -0.08 + mouse.x * 0.04 + Math.sin(motion * 0.18) * 0.025;
+      rig.rotation.x = -0.12 + mouse.y * 0.025;
+      core.position.y = 0.14 + Math.sin(motion * 0.55) * 0.018;
 
-      nodes.forEach((node, index) => {
-        const orbit = node.angle + motion * (0.08 + index * 0.004);
-        const verticalPulse = Math.sin(motion * 1.15 + index) * 0.1;
-        node.mesh.position.set(
-          Math.cos(orbit) * node.radius,
-          node.height + verticalPulse,
-          Math.sin(orbit) * node.radius,
-        );
-        node.mesh.rotation.x = motion * 0.22;
-        node.mesh.rotation.y = motion * 0.34;
-
-        const positions = node.line.geometry.attributes.position;
-        positions.setXYZ(0, 0, 0, 0);
-        positions.setXYZ(
-          1,
-          node.mesh.position.x,
-          node.mesh.position.y,
-          node.mesh.position.z,
-        );
-        positions.needsUpdate = true;
+      nodeMeshes.forEach((mesh, index) => {
+        mesh.position.y =
+          serviceNodes[index].y + Math.sin(motion * 0.5 + index) * 0.018;
       });
 
       renderer.render(scene, camera);
@@ -199,7 +186,7 @@ export function BackendOrbitScene() {
             : [object.material];
           materials.forEach((material) => material.dispose());
         }
-        if (object instanceof THREE.Line) {
+        if (object instanceof THREE.Line || object instanceof THREE.LineSegments) {
           object.geometry.dispose();
           object.material.dispose();
         }
@@ -211,7 +198,7 @@ export function BackendOrbitScene() {
     <canvas
       ref={canvasRef}
       className="backend-orbit"
-      aria-label="Animated 3D backend system with gateway, service, database, and event nodes"
+      aria-label="Subtle 3D backend architecture diagram with service and database nodes"
     />
   );
 }
