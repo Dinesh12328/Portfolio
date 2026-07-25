@@ -13,6 +13,8 @@ const excludedLegacyTerms = [
   "short" + "list",
   "inter" + "viewer " + "ver" + "dict",
   "move " + "forward",
+  "candi" + "date",
+  "short" + "listed",
 ];
 
 function assertNoLegacyTerms(content) {
@@ -30,13 +32,14 @@ test("keeps the finished portfolio content and real links", async () => {
 
   assert.match(source, /Dinesh Pyla \| Java Backend Developer/);
   assert.match(source, /Java Backend Developer/);
-  assert.match(source, /Backend portfolio built around real Spring Boot systems/);
+  assert.match(source, /<h1 id="hero-title">Dinesh Pyla<\/h1>/);
+  assert.match(source, /Java, Spring Boot, APIs, and backend systems/);
   assert.match(source, /WorkFlowPro/);
   assert.match(source, /ResumeFit AI/);
   assert.match(source, /Event-Driven Order Delivery/);
   assert.match(source, /ShopEase Backend API/);
-  assert.match(source, /Engineering Highlights/);
-  assert.match(source, /What the project work demonstrates/);
+  assert.match(source, /How I Work/);
+  assert.match(source, /Practical backend habits/);
   assert.match(source, /https:\/\/github\.com\/Dinesh12328\/ResumeFit-Ai/);
   assert.match(
     source,
@@ -48,6 +51,19 @@ test("keeps the finished portfolio content and real links", async () => {
   assert.match(source, /https:\/\/shopease-backend-api\.onrender\.com/);
   assert.doesNotMatch(source, /Codex/);
   assert.doesNotMatch(source, /codex-preview|react-loading-skeleton/i);
+  assert.doesNotMatch(
+    source,
+    new RegExp(
+      [
+        "inter" + "viewer",
+        "short" + "list",
+        "ver" + "dict",
+        "arro" + "gant",
+        "dis" + "gusting",
+      ].join("|"),
+      "i",
+    ),
+  );
   assertNoLegacyTerms(source);
 });
 

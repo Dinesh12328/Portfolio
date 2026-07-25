@@ -1,11 +1,11 @@
 # Dinesh Pyla Portfolio
 
-Immersive portfolio for Dinesh Pyla, a Java Backend Developer
-focused on Spring Boot, REST APIs, JWT security, persistence, microservices,
-Kafka-ready event flows, Docker, and deployable backend projects.
+Immersive portfolio for Dinesh Pyla, a Java Backend Developer working with
+Spring Boot, REST APIs, JWT security, persistence, microservices, Kafka-ready
+event flows, Docker, and deployable backend projects.
 
-The site presents real projects, live demos, source links, technical strengths,
-education, and contact information in a professional portfolio format.
+The site presents Dinesh's projects, skills, education, live demos, source
+links, and contact information.
 
 ## Featured Projects
 
@@ -39,9 +39,8 @@ npm run build
 npm test
 ```
 
-The test suite checks that the portfolio renders the correct professional
-content, project links, engineering highlights, and no unrelated starter
-preview material.
+The test suite checks that the portfolio renders the correct profile content,
+project links, backend sections, and no unrelated starter preview material.
 
 ## Profile Links
 

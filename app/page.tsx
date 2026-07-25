@@ -158,18 +158,18 @@ const skillGroups = [
 
 const highlightItems = [
   {
-    title: "API Ownership",
-    text: "Built multiple Spring Boot applications with authentication, role-based flows, layered services, persistence, documentation, and deployable project structure.",
+    title: "API Development",
+    text: "I build Spring Boot APIs with authentication, role-based flows, layered services, persistence, documentation, and deployable project structure.",
     icon: BadgeCheck,
   },
   {
-    title: "System Design Practice",
-    text: "Applied microservices, gateway routing, service discovery, event-driven order flows, Redis caching, and clean lifecycle rules in project work.",
+    title: "Service Architecture",
+    text: "I work with microservices, gateway routing, service discovery, event-driven order flows, Redis caching, and clean lifecycle rules.",
     icon: ShieldCheck,
   },
   {
-    title: "Engineering Discipline",
-    text: "Project repositories include real setup paths, API documentation, security decisions, Docker support, and focused testing practices.",
+    title: "Delivery Mindset",
+    text: "I care about setup clarity, API documentation, security decisions, Docker support, testable flows, and maintainable backend code.",
     icon: Sparkles,
   },
 ];
@@ -198,14 +198,11 @@ export default function Home() {
               <TerminalSquare aria-hidden="true" size={18} />
               Java Backend Developer
             </div>
-            <h1 id="hero-title">
-              Backend portfolio built around real Spring Boot systems.
-            </h1>
+            <h1 id="hero-title">Dinesh Pyla</h1>
             <p className="hero-copy">
-              Dinesh Pyla builds Spring Boot applications with secure REST APIs,
-              persistence, microservices, event-driven workflows, Dockerized
-              delivery, and browser-ready demos with source code available for
-              review.
+              Java backend developer working with Spring Boot, REST APIs, JWT
+              security, persistence, microservices, event-driven workflows,
+              Docker, and production-minded project structure.
             </p>
 
             <div className="hero-actions" aria-label="Primary links">
@@ -234,10 +231,10 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hero-proof" aria-label="Candidate proof points">
+          <div className="hero-proof" aria-label="Profile proof points">
             <div>
               <strong>4</strong>
-              <span>live demos</span>
+              <span>projects</span>
             </div>
             <div>
               <strong>Java 17/21</strong>
@@ -255,30 +252,28 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section intro-band" aria-label="Professional summary">
+      <section className="section intro-band" aria-label="Profile summary">
         <div className="section-grid two-column">
           <div>
             <p className="section-kicker">Profile</p>
-            <h2>Java backend developer focused on practical systems.</h2>
+            <h2>Java, Spring Boot, APIs, and backend systems.</h2>
           </div>
           <p className="lead">
-            Dinesh Pyla is focused on Java backend engineering: Spring Boot
-            applications, REST API design, authentication, persistence,
-            microservices, and deployment. The work shown here highlights the
-            projects most relevant to backend engineering roles.
+            I focus on Java backend development with Spring Boot, REST API
+            design, authentication, persistence, microservices, and deployment.
+            My projects are practical backend builds with live links, source
+            repositories, and clear implementation details.
           </p>
         </div>
       </section>
 
       <section className="section" id="projects" aria-labelledby="projects-title">
         <div className="section-heading">
-          <p className="section-kicker">Project Evidence</p>
-          <h2 id="projects-title">
-            Production-style projects with live demos and source.
-          </h2>
+          <p className="section-kicker">Projects</p>
+          <h2 id="projects-title">Spring Boot projects with live demos.</h2>
           <p>
             Render demos can take a cold-start moment, but each card includes
-            both the live project and source repository for direct review.
+            the live project and the GitHub repository.
           </p>
         </div>
 
@@ -339,8 +334,8 @@ export default function Home() {
 
       <section className="section systems-band" aria-labelledby="systems-title">
         <div className="section-heading compact">
-          <p className="section-kicker">Architecture Signal</p>
-          <h2 id="systems-title">Backend depth shown through implementation.</h2>
+          <p className="section-kicker">Backend Work</p>
+          <h2 id="systems-title">The areas I keep improving.</h2>
         </div>
         <div className="signal-grid">
           <div className="signal-item">
@@ -381,10 +376,10 @@ export default function Home() {
       <section className="section" id="skills" aria-labelledby="skills-title">
         <div className="section-heading">
           <p className="section-kicker">Technical Stack</p>
-          <h2 id="skills-title">Focused Java backend stack.</h2>
+          <h2 id="skills-title">Java backend stack.</h2>
           <p>
-            Focused on technologies used across Java backend, API, and
-            Spring Boot development work.
+            Technologies I use across Java backend, API, and Spring Boot
+            development.
           </p>
         </div>
 
@@ -414,12 +409,12 @@ export default function Home() {
         aria-labelledby="highlights-title"
       >
         <div className="section-heading">
-          <p className="section-kicker">Engineering Highlights</p>
-          <h2 id="highlights-title">What the project work demonstrates.</h2>
+          <p className="section-kicker">How I Work</p>
+          <h2 id="highlights-title">Practical backend habits.</h2>
           <p>
-            A quick view of the engineering strengths visible across the
-            repositories: API design, security, persistence, service boundaries,
-            deployment readiness, and maintainable project structure.
+            I keep my backend projects focused on clear API design, secure
+            flows, persistence, service boundaries, deployment readiness, and
+            maintainable project structure.
           </p>
         </div>
         <div className="highlight-grid">
@@ -472,10 +467,10 @@ export default function Home() {
         <div className="contact-panel">
           <div>
             <p className="section-kicker">Contact</p>
-            <h2 id="contact-title">Available for Java backend opportunities.</h2>
+            <h2 id="contact-title">Let&apos;s connect.</h2>
             <p>
-              For Java, Spring Boot, REST API, and backend development roles,
-              start with the project demos, source links, GitHub, and LinkedIn.
+              Reach me by email, GitHub, LinkedIn, or LeetCode. The project
+              links above include live demos and source repositories.
             </p>
           </div>
           <div className="contact-actions">
