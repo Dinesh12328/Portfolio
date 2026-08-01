@@ -39,6 +39,14 @@ npm run build
 npm test
 ```
 
+## Deploy on Vercel
+
+- Framework preset: `Next.js`
+- Install command: `npm install`
+- Build command: `npm run build`
+- Output setting: default for Next.js
+- Node.js version: `20.x` or `22.x`
+
 The test suite checks that the portfolio renders the correct profile content,
 project links, backend sections, and no unrelated starter preview material.
 
