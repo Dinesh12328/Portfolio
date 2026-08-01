@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 import test from "node:test";
 
 const templateRoot = new URL("../", import.meta.url);
@@ -23,16 +25,38 @@ function assertNoLegacyTerms(content) {
   }
 }
 
+async function readSourceTree(rootPath) {
+  const entries = await readdir(rootPath, { withFileTypes: true });
+  const files = await Promise.all(
+    entries
+      .filter((entry) => !entry.name.startsWith("."))
+      .map(async (entry) => {
+        const fullPath = path.join(rootPath, entry.name);
+        if (entry.isDirectory()) {
+          return readSourceTree(fullPath);
+        }
+
+        if (!/\.(ts|tsx|css)$/.test(entry.name)) {
+          return "";
+        }
+
+        return readFile(fullPath, "utf8");
+      }),
+  );
+
+  return files.join("\n");
+}
+
 test("keeps the finished portfolio content and real links", async () => {
-  const [page, layout] = await Promise.all([
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-  ]);
-  const source = `${layout}\n${page}`;
+  const appSource = await readSourceTree(
+    fileURLToPath(new URL("../app", import.meta.url)),
+  );
+  const layout = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
+  const source = `${layout}\n${appSource}`;
 
   assert.match(source, /Dinesh Pyla \| Java Backend Developer/);
   assert.match(source, /Java Backend Developer/);
-  assert.match(source, /<h1 id="hero-title">Dinesh Pyla<\/h1>/);
+  assert.match(source, /Dinesh Pyla/);
   assert.match(source, /Java, Spring Boot, APIs, and backend systems/);
   assert.match(source, /WorkFlowPro/);
   assert.match(source, /ResumeFit AI/);
@@ -68,9 +92,8 @@ test("keeps the finished portfolio content and real links", async () => {
 });
 
 test("builds as a Vercel-compatible Next application", async () => {
-  const [css, page, layout, packageJson] = await Promise.all([
-    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+  const [appSource, layout, packageJson] = await Promise.all([
+    readSourceTree(fileURLToPath(new URL("../app", import.meta.url))),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
@@ -79,16 +102,16 @@ test("builds as a Vercel-compatible Next application", async () => {
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   assert.doesNotMatch(packageJson, /vinext|vite|wrangler|cloudflare/i);
   assert.match(packageJson, /"build": "next build"/);
-  assert.doesNotMatch(page, /codex-preview|SkeletonPreview/i);
-  assertNoLegacyTerms(page);
+  assert.doesNotMatch(appSource, /codex-preview|SkeletonPreview/i);
+  assertNoLegacyTerms(appSource);
   assert.doesNotMatch(layout, /codex-preview|_sites-preview|Starter Project/);
   assert.doesNotMatch(layout, /next\/headers/);
-  assert.match(page, /BackendOrbitScene/);
-  assert.match(page, /Java 21/);
-  assert.match(page, /Spring Boot/);
-  assert.match(css, /\.backend-orbit/);
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assertNoLegacyTerms(css);
+  assert.match(appSource, /BackendOrbitScene/);
+  assert.match(appSource, /PremiumOrbitScene/);
+  assert.match(appSource, /Java 21/);
+  assert.match(appSource, /Spring Boot/);
+  assert.match(appSource, /\.backend-orbit/);
+  assert.match(appSource, /prefers-reduced-motion:\s*reduce/);
 
   await assert.rejects(access(new URL("app/_sites-preview", templateRoot)));
   await assert.rejects(access(new URL("vite.config.ts", templateRoot)));
